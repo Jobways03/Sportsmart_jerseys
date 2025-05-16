@@ -39,8 +39,9 @@ export default function Login() {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <h1>SPORTSMART ELITE JERSEYS</h1>
+          <h1>ORDER YOUR CUSTOMISED JERSEYS</h1>
           <h2>Log In to Your Account</h2>
+          <p style={{color:"red"}}>(No OTP or Password Required)</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}

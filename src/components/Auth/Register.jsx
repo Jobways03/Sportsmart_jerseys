@@ -47,8 +47,9 @@ export default function Register() {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
-          <h1>SPORTSMART ELITE JERSEYS</h1>
+          <h1>ORDER YOUR CUSTOMISED JERSEYS</h1>
           <h2>Create New Account</h2>
+          <p style={{ color: "red" }}>(No OTP or Password Required)</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}
@@ -128,3 +129,15 @@ export default function Register() {
     </div>
   );
 }
+
+{/* <div
+  class="jersey-customizer-wrapper"
+  style="width:100%; max-width:1200px; margin:0 auto;"
+>
+  <iframe
+    src="https://sportsmart-jerseys.vercel.app/"
+    frameborder="0"
+    style="width:100%; height:80vh; min-height:600px;"
+    allowfullscreen
+  ></iframe>
+</div>; */}
