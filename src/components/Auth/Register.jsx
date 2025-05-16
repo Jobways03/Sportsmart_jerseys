@@ -33,7 +33,7 @@ export default function Register() {
       setLoading(false);
       setSuccess(true);
 
-      // wait a moment so user sees success message, then go to login
+      
       setTimeout(() => nav("/login", { replace: true }), 2000);
     } catch (err) {
       setLoading(false);
