@@ -9,7 +9,7 @@ function LoadingSpinner({ small }) {
 
 export default function Register() {
   const { api } = useContext(AuthContext);
-  const nav = useNavigate();
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     name: "",
@@ -20,21 +20,60 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handleChange = (e) =>
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const validateField = (name, value) => {
+    switch (name) {
+      case "name":
+        if (!/^[A-Za-z ]{2,}$/.test(value.trim())) {
+          return "Name must be at least 2 letters long and contain only letters and spaces.";
+        }
+        break;
+      case "teamName":
+        if (!/^[A-Za-z0-9 &-]{3,}$/.test(value.trim())) {
+          return "Team Name must be at least 3 characters.";
+        }
+        break;
+      case "phone":
+        if (!/^\d{10}$/.test(value)) {
+          return "Phone number must be exactly 10 digits.";
+        }
+        break;
+      default:
+        return "";
+    }
+    return "";
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    // allow up to 10 digits for phone
+    if (name === "phone" && !/^\d{0,10}$/.test(value)) return;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (error) setError("");
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const msg = validateField(name, value);
+    setError(msg);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // check all fields in order, show first error
+    for (let key of ["name", "teamName", "phone"]) {
+      const msg = validateField(key, form[key]);
+      if (msg) {
+        setError(msg);
+        return;
+      }
+    }
     setError("");
     setLoading(true);
-
     try {
       await api.post("/api/auth/register", form);
-      setLoading(false);
       setSuccess(true);
-
-      
-      setTimeout(() => nav("/login", { replace: true }), 2000);
+      setLoading(false);
+      setTimeout(() => navigate("/login", { replace: true }), 2000);
     } catch (err) {
       setLoading(false);
       setError(
@@ -59,43 +98,44 @@ export default function Register() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className="auth-field">
-            <label>Name</label>
+            <label htmlFor="name">Name</label>
             <input
-              type="text"
+              id="name"
               name="name"
+              type="text"
               value={form.name}
               onChange={handleChange}
+              onBlur={handleBlur}
               required
               disabled={loading || success}
             />
           </div>
 
           <div className="auth-field">
-            <label>Team Name</label>
+            <label htmlFor="teamName">Team Name</label>
             <input
-              type="text"
+              id="teamName"
               name="teamName"
+              type="text"
               value={form.teamName}
               onChange={handleChange}
+              onBlur={handleBlur}
               required
               disabled={loading || success}
             />
           </div>
 
           <div className="auth-field">
-            <label>Phone Number</label>
+            <label htmlFor="phone">Phone Number</label>
             <input
-              type="text"
+              id="phone"
               name="phone"
+              type="text"
               value={form.phone}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (/^\d{0,10}$/.test(value)) {
-                  handleChange(e);
-                }
-              }}
+              onChange={handleChange}
+              onBlur={handleBlur}
               required
               maxLength="10"
               inputMode="numeric"
@@ -129,15 +169,3 @@ export default function Register() {
     </div>
   );
 }
-
-{/* <div
-  class="jersey-customizer-wrapper"
-  style="width:100%; max-width:1200px; margin:0 auto;"
->
-  <iframe
-    src="https://sportsmart-jerseys.vercel.app/"
-    frameborder="0"
-    style="width:100%; height:80vh; min-height:600px;"
-    allowfullscreen
-  ></iframe>
-</div>; */}
